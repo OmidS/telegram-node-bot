@@ -5,7 +5,8 @@
   "main": "lib/Telegram.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "node api-scheme/GenerateTGModels.js"
+    "prepublish": "node api-scheme/GenerateTGModels.js",
+    "postinstall": "node api-scheme/GenerateTGModels.js"
   },
   "repository": {
     "type": "git",
