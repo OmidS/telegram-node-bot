@@ -112,7 +112,11 @@ class SchemeClass {
             code += `   constructor(${fieldsNames.join(', ')}) {\n`
         }
 
-        if(this.name.indexOf('MessageContent') > -1 || this.name.indexOf('InlineQueryResult') > -1)
+        if(this.name.indexOf('MessageContent') > -1 
+        || this.name.indexOf('InlineQueryResult') > -1
+        || this.name.indexOf('InputMedia') > -1
+        || this.name.indexOf('PassportElementError') > -1
+        )
             code += `       super()\n`
 
         fieldsNames.forEach(name => code += `       this._${name} = ${name}\n`)
@@ -260,6 +264,12 @@ class SchemeClass {
         }
         if (this.name.indexOf('InlineQueryResult') > -1) {
             code += `const InlineQueryResult = require('./InlineQueryResult')`
+        }
+        if (this.name.indexOf('InputMedia') > -1) {
+            code += `const InputMedia = require('./InputMedia')`
+        }
+        if (this.name.indexOf('PassportElementError') > -1) {
+            code += `const PassportElementError = require('./PassportElementError')`
         }
 
         return code == '' ? '' : `${code}\n`
