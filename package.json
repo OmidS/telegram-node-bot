@@ -29,8 +29,7 @@
     "jsdoc": "latest",
     "ink-docstrap": "latest"
   },
-  "devDependencies": {    
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=6.0.0"
   }

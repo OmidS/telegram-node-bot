@@ -10,6 +10,7 @@ const JS_TYPES = {
     Float: 'number',
     'Float number': 'number',
     'InputFile or String': 'string',
+    'VoiceChatStarted': 'string',
     Boolean: 'boolean',
     True: 'boolean',
     False: 'boolean'
