@@ -4,4 +4,6 @@ docs
 lib/models/*
 !lib/models/InlineQueryResult.js
 !lib/models/InputMessageContent.js
+!lib/models/InputMedia.js
+!lib/models/PassportElementError.js
 ScreenShot.png

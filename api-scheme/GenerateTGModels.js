@@ -4,11 +4,21 @@ const ModelsGenerator = require('./models/ModelsGenerator')
 const fs = require('fs')
 const net = require('tiny_request')
 
-net.get('https://core.telegram.org/bots/api', data => {
+// net.get('https://core.telegram.org/bots/api', data => {
+fs.readFile ('./doc/Telegram Bot API.html', 'utf8', (err, data) => {
+    if (err) {
+        console.error(err)
+        return
+    }
     const generator = new ModelsGenerator(data)
 
-    const models = generator.generateModels()
+    let models = generator.generateModels()
 
+
+    const umbrellaModels = models.filter( m => m.altTypes && m.altTypes.length )
+    console.info(`${umbrellaModels.length} umbrella models detected\n`)
+
+    models = models.filter( m => !m.altTypes || !m.altTypes.length )
     console.info(`${models.length} models generated\n`)
 
     models.forEach(model => {
@@ -36,6 +46,8 @@ function generateAllModelsExport(models) {
     models.forEach(model => code += `   ${model.name}: require('./${model.name}'),\n`)
     code += `   InputMessageContent: require('./InputMessageContent'),\n`
     code += `   InlineQueryResult: require('./InlineQueryResult'),\n`
+    code += `   InputMedia: require('./InputMedia'),\n`
+    code += `   PassportElementError: require('./PassportElementError'),\n`
 
     code += '}'
 

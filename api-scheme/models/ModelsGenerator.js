@@ -10,7 +10,6 @@ const JS_TYPES = {
     Float: 'number',
     'Float number': 'number',
     'InputFile or String': 'string',
-    'VoiceChatStarted': 'string',
     Boolean: 'boolean',
     True: 'boolean',
     False: 'boolean'
@@ -38,7 +37,8 @@ class ModelsGenerator {
             models.push(new SchemeClass(
                 model.name,
                 this._prepareFields(model.fields),
-                model.desc
+                model.desc,
+                model.altTypes
             ))
         })
 
@@ -99,17 +99,36 @@ class ModelsGenerator {
         const apiScheme = []
 
         $("h4").each((index, el) => {
+            let siblings = new Array();
+            siblings.push( el )
+            for (let i=0; i<10; i++){
+                let next = $(siblings[siblings.length-1]).next()
+                if ((next.prop("tagName") == 'H4') || (next.prop("tagName") == 'H3')) break
+                siblings.push( next[0] )
+                if (next.prop("tagName") == 'TABLE') break
+            }
             const nextTag = $(el).next().prop("tagName")
             const nextNextTag = $(el).next().next().prop("tagName")
             const nextNextNextTag = $(el).next().next().next().prop("tagName")
 
+            try {
+                console.log('Checking if h4: "'+ $(el).text()+'" is a model or dummy type')
+            } catch (e) {
+                console.log( e )
+            }
             if (
                 nextTag == 'P' &&
                 ( nextNextTag == 'TABLE'
-                || nextNextTag == 'BLOCKQUOTE' && nextNextNextTag == 'TABLE')
+                || nextNextTag == 'BLOCKQUOTE' && nextNextNextTag == 'TABLE'
+                || ($(el).text() == 'LoginUrl')
+                )
             ) {
                 let isModel = true
                 var model = {}
+
+                // if ($(siblings[siblings.length-1]).prop("tagName") != 'TABLE'){
+                //     console.log('Discrepency');
+                // }
 
                 model.name = $(el).text()
                 model.desc = $(el).next().text()
@@ -117,7 +136,13 @@ class ModelsGenerator {
 
                 if (nextNextTag == 'TABLE') var table =  $(el).next().next().children().children()
                 if (nextNextTag == 'BLOCKQUOTE') var table =  $(el).next().next().next().children().children()
-
+                if ($(el).text() == 'LoginUrl') var table = $(siblings[siblings.length-1]).children().children()
+                
+                // let table2 = $(siblings[siblings.length-1])
+                // let table_content = table2.children().children()
+                // if (table_content[0] !== table[0]){
+                //     console.log('Discrepency!')
+                // }
 
                 table.each((i, item) => {
                     let fieldRaw = []
@@ -151,6 +176,28 @@ class ModelsGenerator {
                 })
 
                 if (isModel) apiScheme.push(model)
+            } else if ($(siblings[siblings.length-1]).prop("tagName") == 'UL'){
+                // Is an umbrella model that can be a list of other types
+                let isModel = true
+                var model = {}
+                model.name = $(el).text()
+                model.desc = $(el).next().text()
+                model.fields = []
+                if (model.name == model.name.replace(/\s/g, "")) {
+                    let listItems = $(siblings[siblings.length-1]).children()
+                    let listItemsText = []
+                    for (let i = 0; i<listItems.length; i++){
+                        let ch = $(listItems[i]).children();
+                        if ($(ch).prop('tagName') == 'A'){
+                            listItemsText.push(ch.text())
+                        } else {
+                            isModel = false;
+                        }
+                    }
+                    model.altTypes = listItemsText
+
+                    if (isModel) apiScheme.push(model)
+                }
             } else if (nextTag == 'P') {
                 // May be a dummy type
                 let isModel = true
@@ -158,7 +205,10 @@ class ModelsGenerator {
 
                 model.name = $(el).text()
                 if (model.name == model.name.replace(/\s/g, "")){
-                    if (model.name == 'CallbackGame') {
+                    if (   (model.name == 'CallbackGame') 
+                        || (model.name == 'VoiceChatStarted') 
+                        || (model.name == 'InputFile') 
+                        || (model.name == 'InputMedia')) {
                         model.desc = $(el).next().text()
                         model.fields = []
                         

@@ -7,10 +7,11 @@ class SchemeClass {
      * @param {SchemeClassField[]} fields
      * @param {string} description
      */
-    constructor(name, fields, description) {
+    constructor(name, fields, description, altTypes) {
         this._name = name
         this._fields = fields
         this._description = description
+        this.altTypes = altTypes
     }
 
     /**
@@ -51,6 +52,12 @@ class SchemeClass {
         }
         if (this.name.indexOf('InlineQueryResult') > -1) {
             extend = `extends InlineQueryResult `
+        }
+        if (this.name.indexOf('InputMedia') > -1) {
+            extend = `extends InputMedia `
+        }
+        if (this.name.indexOf('PassportElementError') > -1) {
+            extend = `extends PassportElementError `
         }
 
         code += "'use strict'\n"
