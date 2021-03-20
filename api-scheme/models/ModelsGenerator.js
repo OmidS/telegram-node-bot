@@ -111,11 +111,7 @@ class ModelsGenerator {
             const nextNextTag = $(el).next().next().prop("tagName")
             const nextNextNextTag = $(el).next().next().next().prop("tagName")
 
-            try {
-                console.log('Checking if h4: "'+ $(el).text()+'" is a model or dummy type')
-            } catch (e) {
-                console.log( e )
-            }
+            // console.log('Checking if h4: "'+ $(el).text()+'" is a model or dummy type')
             if (
                 nextTag == 'P' &&
                 ( nextNextTag == 'TABLE'
